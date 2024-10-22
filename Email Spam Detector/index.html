@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Email Spam Detector</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 50px;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            max-width: 500px;
+        }
+        input, button {
+            padding: 10px;
+            margin-top: 10px;
+            width: 100%;
+        }
+        #result {
+            margin-top: 20px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <h1>Email Spam Detector</h1>
+    <form id="spamForm">
+        <label for="message">Enter your message:</label>
+        <input type="text" id="message" name="message" required>
+        <button type="submit">Check for Spam</button>
+    </form>
+    <div id="result"></div>
+
+    <script>
+        document.getElementById('spamForm').addEventListener('submit', async function (e) {
+            e.preventDefault(); // Prevent form submission
+
+            const message = document.getElementById('message').value;
+
+            try {
+                const response = await fetch(`http://127.0.0.1:5000/email?message=${encodeURIComponent(message)}`, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                // Check if the response is OK (status code 200)
+                if (response.ok) {
+                    const result = await response.text();
+                    document.getElementById('result').innerText = `Result: ${result}`;
+                } else {
+                    document.getElementById('result').innerText = 'Error: ' + response.statusText;
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                document.getElementById('result').innerText = 'An error occurred while checking for spam.';
+            }
+        });
+    </script>
+</body>
+</html>
